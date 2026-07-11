@@ -51,6 +51,8 @@ export const api = {
   // Users (Admin operations)
   getUsers: () => request('/api/users'),
   deleteUser: (id) => request(`/api/users/${id}`, { method: 'DELETE' }),
+  // PUT /api/users/:id/role - Update user's privileges/role (e.g. promoting them to 'admin')
+  updateUserRole: (id, role) => request(`/api/users/${id}/role`, { method: 'PUT', body: { role } }),
 
   // Categories
   getCategories: () => request('/api/categories'),

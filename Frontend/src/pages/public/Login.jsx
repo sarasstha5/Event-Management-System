@@ -59,18 +59,18 @@ export default function Login() {
 
           <form className="space-y-5" onSubmit={handleSubmit}>
             <Field label="Email">
-              <Input 
-                type="email" 
-                placeholder="you@example.com" 
+              <Input
+                type="email"
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </Field>
             <Field label="Password">
-              <Input 
-                type="password" 
-                placeholder="••••••••" 
+              <Input
+                type="password"
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required

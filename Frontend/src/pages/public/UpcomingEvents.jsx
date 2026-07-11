@@ -11,7 +11,7 @@ export default function UpcomingEvents() {
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  
+
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('all')
 

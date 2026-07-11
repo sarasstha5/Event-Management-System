@@ -11,8 +11,8 @@ body { @apply font-body text-ink antialiased; }
   position: relative;
   background-image: repeating-linear-gradient(
     to bottom,
-    #E4E7EC 0,
-    #E4E7EC 6px,
+    #E3E8EE 0,
+    #E3E8EE 6px,
     transparent 6px,
     transparent 14px
   );
@@ -24,7 +24,7 @@ body { @apply font-body text-ink antialiased; }
   position: absolute;
   width: 16px;
   height: 16px;
-  background: #FAFBFC;
+  background: #FFFFFF;
   border-radius: 9999px;
   left: -8px;
 }
@@ -37,4 +37,64 @@ body { @apply font-body text-ink antialiased; }
 
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* ==========================================================================
+   Cvent Navy Theme Overrides (Color-only overrides targeting specific roles)
+   ========================================================================== */
+
+/* 1. Primary Buttons: Force background to Accent Orange (#FF6A39) */
+button.bg-ink,
+a.bg-ink {
+  background-color: #FF6A39 !important;
+  color: #FFFFFF !important;
+}
+
+button.bg-ink:hover,
+a.bg-ink:hover {
+  background-color: #E05226 !important;
+  color: #FFFFFF !important;
+}
+
+/* 2. Active Navigation States: Sparingly use Accent Orange (#FF6A39) */
+/* Dashboard sidebar active nav link */
+a.bg-cobalt-50.text-cobalt-600 {
+  background-color: rgba(255, 106, 57, 0.08) !important;
+  color: #FF6A39 !important;
+}
+
+a.bg-cobalt-50.text-cobalt-600 svg {
+  color: #FF6A39 !important;
+}
+
+/* Public header active nav link */
+a.text-ink.bg-black\/\[0\.04\] {
+  background-color: rgba(255, 106, 57, 0.08) !important;
+  color: #FF6A39 !important;
+}
+
+/* 3. Existing Gradients: Force color stops from #0F2A4A (navy) to #1E4A7A (deep navy) */
+.bg-gradient-to-r.from-cobalt-500.to-amber-500,
+.from-cobalt-500.to-cobalt-700,
+.from-amber-400.to-amber-600,
+.from-ink.to-cobalt-700,
+.from-cobalt-400.to-ink,
+.from-amber-500.to-danger,
+.from-cobalt-500.to-amber-500 {
+  background-image: linear-gradient(to right, #0F2A4A, #1E4A7A);
+}
+
+.bg-gradient-to-br.from-cobalt-500.to-cobalt-700,
+.bg-gradient-to-br.from-amber-400.to-amber-600,
+.bg-gradient-to-br.from-ink.to-cobalt-700,
+.bg-gradient-to-br.from-cobalt-400.to-ink,
+.bg-gradient-to-br.from-amber-500.to-danger,
+.bg-gradient-to-br.from-cobalt-500.to-amber-500 {
+  background-image: linear-gradient(135deg, #0F2A4A, #1E4A7A);
+}
+
+/* 4. Badge on cards with banner backgrounds */
+.badge-banner {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  color: #FFFFFF !important;
 }

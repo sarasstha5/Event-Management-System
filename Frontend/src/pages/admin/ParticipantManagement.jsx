@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Search, Trash2, Eye, AlertCircle } from 'lucide-react'
+import { Search, Trash2, Eye, AlertCircle, ShieldCheck } from 'lucide-react'
 import AdminLayout from '../../layouts/AdminLayout'
 import Table, { Td } from '../../components/Table'
 import Input from '../../components/Input'
@@ -19,6 +19,8 @@ export default function ParticipantManagement() {
   const [query, setQuery] = useState('')
   const [historyFor, setHistoryFor] = useState(null)
   const [deleteTarget, setDeleteTarget] = useState(null)
+  // promoteTarget stores the user object currently selected to be promoted to administrator
+  const [promoteTarget, setPromoteTarget] = useState(null)
 
   const fetchUsersAndRegs = async () => {
     try {
@@ -59,6 +61,27 @@ export default function ParticipantManagement() {
     } catch (err) {
       console.error('Error deleting user:', err)
       setError(err.message || 'Failed to remove participant.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  // Handles updating the user's role to administrator in the database
+  const confirmPromote = async () => {
+    if (!promoteTarget) return
+
+    setError(null)
+    setSubmitting(true)
+    try {
+      // API call to backend PUT route to set role = 'admin'
+      await api.updateUserRole(promoteTarget.id, 'admin')
+      // Refresh the participant and registration records
+      await fetchUsersAndRegs()
+      // Close the promote modal
+      setPromoteTarget(null)
+    } catch (err) {
+      console.error('Error promoting user:', err)
+      setError(err.message || 'Failed to promote participant.')
     } finally {
       setSubmitting(false)
     }
@@ -107,6 +130,9 @@ export default function ParticipantManagement() {
                   <button onClick={() => setHistoryFor(u)} className="p-2 rounded-lg text-ink-soft hover:text-ink hover:bg-black/[0.04] focus-ring" title="View registration history">
                     <Eye size={15} />
                   </button>
+                  <button onClick={() => setPromoteTarget(u)} className="p-2 rounded-lg text-ink-soft hover:text-amber-600 hover:bg-amber-50 focus-ring" title="Make Admin">
+                    <ShieldCheck size={15} />
+                  </button>
                   <button onClick={() => setDeleteTarget(u)} className="p-2 rounded-lg text-ink-soft hover:text-danger hover:bg-danger/5 focus-ring" title="Remove participant">
                     <Trash2 size={15} />
                   </button>
@@ -135,6 +161,18 @@ export default function ParticipantManagement() {
             })}
           </div>
         )}
+      </Modal>
+
+      <Modal open={!!promoteTarget} onClose={() => setPromoteTarget(null)} title="Promote to administrator">
+        <p className="text-sm text-ink-soft mb-6">
+          Are you sure you want to promote <span className="font-medium text-ink">{promoteTarget?.fullname}</span> to an administrator?
+          <br /><br />
+          <strong className="text-ink">Warning:</strong> They will gain access to the administration dashboard and full management permissions. This action can only be undone by another administrator.
+        </p>
+        <div className="flex gap-3 justify-end">
+          <Button variant="secondary" onClick={() => setPromoteTarget(null)} disabled={submitting}>Cancel</Button>
+          <Button variant="primary" onClick={confirmPromote} disabled={submitting}>{submitting ? 'Promoting...' : 'Make Admin'}</Button>
+        </div>
       </Modal>
 
       <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} title="Remove participant">

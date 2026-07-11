@@ -23,7 +23,7 @@ export default function Contact() {
               <Phone size={16} className="text-ink-faint" /> +91 98765 43210
             </div>
             <div className="flex items-center gap-3 text-sm text-ink-soft">
-              <MapPin size={16} className="text-ink-faint" /> Student Activity Center, Room 12
+              <MapPin size={16} className="text-ink-faint" /> Manglabare,MBMAN COLLEGE
             </div>
           </div>
         </div>

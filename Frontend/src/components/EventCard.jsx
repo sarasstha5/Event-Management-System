@@ -2,6 +2,7 @@ import { MapPin, Users } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { categoryName, formatDate, formatTime } from '../data/mockData'
 import Badge from './Badge'
+import { api } from '../utils/api'
 
 const bannerTones = {
   Seminar: 'from-cobalt-500 to-cobalt-700',
@@ -22,6 +23,8 @@ export default function EventCard({ event }) {
   const month = date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()
   const seatsLeft = event.max_participants - event.registered_count
   const full = seatsLeft <= 0
+  const hasBanner = !!event.banner
+  const bannerUrl = hasBanner ? api.getAssetUrl(event.banner) : null
 
   return (
     <Link
@@ -29,22 +32,28 @@ export default function EventCard({ event }) {
       className="group flex bg-white rounded-2xl border border-line hover:border-ink/20 hover:shadow-lg shadow-sm transition-all duration-200 overflow-hidden"
     >
       {/* Info side */}
-      <div className="flex-1 min-w-0 flex flex-col">
-        <div className={`h-2.5 w-full bg-gradient-to-r ${bannerTones[cat] ?? 'from-cobalt-500 to-cobalt-700'}`} />
-        <div className="p-5 flex-1 flex flex-col gap-3">
+      <div 
+        className="flex-1 min-w-0 flex flex-col relative bg-cover bg-center"
+        style={bannerUrl ? { backgroundImage: `url(${bannerUrl})` } : {}}
+      >
+        {bannerUrl && <div className="absolute inset-0 bg-black/45 z-0" />}
+        {!bannerUrl && (
+          <div className={`h-2.5 w-full bg-gradient-to-r ${bannerTones[cat] ?? 'from-cobalt-500 to-cobalt-700'}`} />
+        )}
+        <div className={`p-5 flex-1 flex flex-col gap-3 relative z-10 ${bannerUrl ? 'text-white' : ''}`}>
           <div className="flex items-center justify-between gap-2">
-            <Badge tone="neutral">{cat}</Badge>
+            <Badge tone="neutral" className={bannerUrl ? 'badge-banner' : ''}>{cat}</Badge>
             {full ? (
               <Badge tone="danger">Full</Badge>
             ) : (
-              <span className="text-xs font-mono text-ink-faint">{seatsLeft} seats left</span>
+              <span className={`text-xs font-mono ${bannerUrl ? 'text-white/80' : 'text-ink-faint'}`}>{seatsLeft} seats left</span>
             )}
           </div>
-          <h3 className="font-display text-xl font-medium leading-snug text-ink group-hover:text-cobalt-600 transition-colors">
+          <h3 className={`font-display text-xl font-medium leading-snug transition-colors ${bannerUrl ? 'text-white group-hover:text-white/90' : 'text-ink group-hover:text-cobalt-600'}`}>
             {event.event_name}
           </h3>
-          <p className="text-sm text-ink-soft line-clamp-2">{event.description}</p>
-          <div className="mt-auto pt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-soft">
+          <p className={`text-sm line-clamp-2 ${bannerUrl ? 'text-white/85' : 'text-ink-soft'}`}>{event.description}</p>
+          <div className={`mt-auto pt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs ${bannerUrl ? 'text-white/70' : 'text-ink-soft'}`}>
             <span className="inline-flex items-center gap-1.5">
               <MapPin size={13} strokeWidth={2} /> {event.venue}
             </span>
