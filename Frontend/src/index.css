@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html { scroll-behavior: smooth; }
+body { @apply font-body text-ink antialiased; }
+
+/* Ticket-stub signature: perforated tear line between the info side
+   and the date-stamp side of an event card. */
+.tear-line {
+  position: relative;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    #E4E7EC 0,
+    #E4E7EC 6px,
+    transparent 6px,
+    transparent 14px
+  );
+  width: 1px;
+}
+.tear-notch::before,
+.tear-notch::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: #FAFBFC;
+  border-radius: 9999px;
+  left: -8px;
+}
+.tear-notch::before { top: -8px; }
+.tear-notch::after { bottom: -8px; }
+
+.focus-ring {
+  @apply outline-none focus-visible:ring-2 focus-visible:ring-cobalt-500 focus-visible:ring-offset-2 focus-visible:ring-offset-paper;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
