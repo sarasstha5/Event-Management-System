@@ -20,7 +20,7 @@ export default function Contact() {
               <Mail size={16} className="text-ink-faint" /> events@eventflow.app
             </div>
             <div className="flex items-center gap-3 text-sm text-ink-soft">
-              <Phone size={16} className="text-ink-faint" /> +91 98765 43210
+              <Phone size={16} className="text-ink-faint" /> +977 9876543210
             </div>
             <div className="flex items-center gap-3 text-sm text-ink-soft">
               <MapPin size={16} className="text-ink-faint" /> Manglabare,MBMAN COLLEGE

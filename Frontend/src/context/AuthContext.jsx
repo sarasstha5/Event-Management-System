@@ -1,19 +1,27 @@
 import { createContext, useState, useEffect, useContext } from 'react';
+import Cookies from 'js-cookie';
 import { api } from '../utils/api';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token') || null);
+  const [user, setUser] = useState(() => {
+    try {
+      const u = localStorage.getItem('user');
+      return u ? JSON.parse(u) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+  const [token, setToken] = useState(() => Cookies.get('accessToken') || null);
   const [loading, setLoading] = useState(true);
 
-  // JWT helper to decode role and id
+  // JWT helper to decode role and id (kept for compatibility if needed, but not strictly required)
   const decodeToken = (t) => {
     try {
       const base64Url = t.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
       }).join(''));
       return JSON.parse(jsonPayload);
@@ -24,20 +32,24 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const initAuth = async () => {
-      const storedToken = localStorage.getItem('token');
+      const storedToken = Cookies.get('accessToken');
       if (storedToken) {
         try {
           const profile = await api.getProfile();
-          // Profile returns user object from DB (which includes role)
           setUser(profile);
+          localStorage.setItem('user', JSON.stringify(profile));
           setToken(storedToken);
         } catch (err) {
           console.error('Failed to load profile on start:', err);
-          // Token might be invalid or expired
-          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          Cookies.remove('accessToken');
           setUser(null);
           setToken(null);
         }
+      } else {
+        localStorage.removeItem('user');
+        setUser(null);
+        setToken(null);
       }
       setLoading(false);
     };
@@ -49,16 +61,13 @@ export function AuthProvider({ children }) {
     try {
       const res = await api.login(email, password);
       // res contains { message, token, user }
-      localStorage.setItem('token', res.token);
-      setToken(res.token);
-
-      // Decoded token contains role and user_id
-      const decoded = decodeToken(res.token);
       
-      // Let's get full profile to ensure all fields are loaded in local state
-      const profile = await api.getProfile();
-      setUser(profile);
-      return profile;
+      setUser(res.user);
+      setToken(res.token);
+      localStorage.setItem('user', JSON.stringify(res.user));
+      Cookies.set('accessToken', res.token);
+
+      return res.user;
     } catch (err) {
       throw err;
     }
@@ -74,7 +83,8 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    Cookies.remove('accessToken');
     setUser(null);
     setToken(null);
   };
@@ -83,6 +93,7 @@ export function AuthProvider({ children }) {
     try {
       const profile = await api.getProfile();
       setUser(profile);
+      localStorage.setItem('user', JSON.stringify(profile));
     } catch (err) {
       console.error('Failed to refresh profile:', err);
     }

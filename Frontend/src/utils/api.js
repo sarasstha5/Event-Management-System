@@ -1,7 +1,9 @@
+import Cookies from 'js-cookie';
+
 const API_BASE = 'http://localhost:5000';
 
 async function request(endpoint, options = {}) {
-  const token = localStorage.getItem('token');
+  const token = Cookies.get('accessToken');
   const headers = {
     ...options.headers,
   };
@@ -40,7 +42,7 @@ async function request(endpoint, options = {}) {
 export const api = {
   // Auth
   login: (email, password) => request('/auth/login', { method: 'POST', body: { email, password } }),
-  register: (fullname, email, phone, password) => 
+  register: (fullname, email, phone, password) =>
     request('/auth/register', { method: 'POST', body: { fullname, email, phone, password } }),
 
   // User profile
