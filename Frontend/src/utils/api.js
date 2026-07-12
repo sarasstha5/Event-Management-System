@@ -1,89 +1,129 @@
-import Cookies from 'js-cookie';
+import axios from "axios";
+import Cookies from "js-cookie";
+import { toast } from "react-hot-toast";
 
 const API_BASE = 'http://localhost:5000';
 
-async function request(endpoint, options = {}) {
-  const token = Cookies.get('accessToken');
-  const headers = {
-    ...options.headers,
-  };
+const client = axios.create({
+  baseURL: API_BASE,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
+// Utility function to retrieve the access token from cookies using js-cookie
+const getAuthTokenFromCookies = () => {
+  return Cookies.get("accessToken");
+};
 
-  // Only set Content-Type to JSON if body is not FormData
-  if (options.body && !(options.body instanceof FormData)) {
-    headers['Content-Type'] = 'application/json';
-    options.body = JSON.stringify(options.body);
-  }
-
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
-    headers,
-  });
-
-  const text = await response.text();
-  let data;
+// Function to handle GET requests
+export const get = async (endpoint, params = {}) => {
   try {
-    data = text ? JSON.parse(text) : {};
-  } catch (e) {
-    data = { message: text || 'An error occurred' };
+    const token = getAuthTokenFromCookies();
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const response = await client.get(endpoint, { params, headers });
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    throw error;
   }
+};
 
-  if (!response.ok) {
-    const errorMsg = data.message || `Request failed with status ${response.status}`;
-    throw new Error(errorMsg);
+// Function to handle POST requests
+export const post = async (endpoint, body = {}, config = {}) => {
+  try {
+    const token = getAuthTokenFromCookies();
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const response = await client.post(endpoint, body, {
+      ...config,
+      headers: { ...headers, ...config.headers },
+    });
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    throw error;
   }
+};
 
-  return data;
-}
+// Function to handle PUT requests
+export const put = async (endpoint, body = {}, config = {}) => {
+  try {
+    const token = getAuthTokenFromCookies();
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const response = await client.put(endpoint, body, {
+      ...config,
+      headers: { ...headers, ...config.headers },
+    });
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    throw error;
+  }
+};
+
+// Function to handle DELETE requests
+export const del = async (endpoint) => {
+  try {
+    const token = getAuthTokenFromCookies();
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const response = await client.delete(endpoint, { headers });
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    throw error;
+  }
+};
+
+// Utility function for handling errors
+const handleError = (error) => {
+  console.error("API Error:", error.response || error.message);
+  const errMsg = error.response?.data?.message || error.response?.data || error.message || "An error occurred. Please try again.";
+  toast.error(errMsg);
+};
 
 export const api = {
   // Auth
-  login: (email, password) => request('/auth/login', { method: 'POST', body: { email, password } }),
-  register: (fullname, email, phone, password) =>
-    request('/auth/register', { method: 'POST', body: { fullname, email, phone, password } }),
+  login: (email, password) => post('/auth/login', { email, password }),
+  register: (fullname, email, phone, password) => 
+    post('/auth/register', { fullname, email, phone, password }),
 
   // User profile
-  getProfile: () => request('/api/users/profile'),
-  updateProfile: (fullname, phone) => request('/api/users/profile', { method: 'PUT', body: { fullname, phone } }),
-  uploadProfileImage: (formData) => request('/api/users/profile-image', { method: 'POST', body: formData }),
+  getProfile: () => get('/api/users/profile'),
+  updateProfile: (fullname, phone) => put('/api/users/profile', { fullname, phone }),
+  uploadProfileImage: (formData) => post('/api/users/profile-image', formData),
 
   // Users (Admin operations)
-  getUsers: () => request('/api/users'),
-  deleteUser: (id) => request(`/api/users/${id}`, { method: 'DELETE' }),
-  // PUT /api/users/:id/role - Update user's privileges/role (e.g. promoting them to 'admin')
-  updateUserRole: (id, role) => request(`/api/users/${id}/role`, { method: 'PUT', body: { role } }),
+  getUsers: () => get('/api/users'),
+  deleteUser: (id) => del(`/api/users/${id}`),
+  updateUserRole: (id, role) => put(`/api/users/${id}/role`, { role }),
 
   // Categories
-  getCategories: () => request('/api/categories'),
-  addCategory: (category_name) => request('/api/categories', { method: 'POST', body: { category_name } }),
-  editCategory: (id, category_name) => request(`/api/categories/${id}`, { method: 'PUT', body: { category_name } }),
-  deleteCategory: (id) => request(`/api/categories/${id}`, { method: 'DELETE' }),
+  getCategories: () => get('/api/categories'),
+  addCategory: (category_name) => post('/api/categories', { category_name }),
+  editCategory: (id, category_name) => put(`/api/categories/${id}`, { category_name }),
+  deleteCategory: (id) => del(`/api/categories/${id}`),
 
   // Events
   getEvents: (filters = {}) => {
-    const params = new URLSearchParams();
+    const cleanFilters = {};
     Object.keys(filters).forEach(key => {
       if (filters[key]) {
-        params.append(key, filters[key]);
+        cleanFilters[key] = filters[key];
       }
     });
-    const queryString = params.toString() ? `?${params.toString()}` : '';
-    return request(`/api/events${queryString}`);
+    return get('/api/events', cleanFilters);
   },
-  getSingleEvent: (id) => request(`/api/events/${id}`),
-  createEvent: (formData) => request('/api/events', { method: 'POST', body: formData }),
-  editEvent: (id, formData) => request(`/api/events/${id}`, { method: 'PUT', body: formData }),
-  deleteEvent: (id) => request(`/api/events/${id}`, { method: 'DELETE' }),
+  getSingleEvent: (id) => get(`/api/events/${id}`),
+  createEvent: (formData) => post('/api/events', formData),
+  editEvent: (id, formData) => put(`/api/events/${id}`, formData),
+  deleteEvent: (id) => del(`/api/events/${id}`),
 
   // Registrations
-  registerForEvent: (event_id) => request('/api/registrations', { method: 'POST', body: { event_id } }),
-  getRegistrations: () => request('/api/registrations'),
-  updateRegistrationStatus: (id, status) => request(`/api/registrations/${id}`, { method: 'PUT', body: { status } }),
-  deleteRegistration: (id) => request(`/api/registrations/${id}`, { method: 'DELETE' }),
-  getEventParticipants: (eventId) => request(`/api/registrations/event/${eventId}`),
+  registerForEvent: (event_id) => post('/api/registrations', { event_id }),
+  getRegistrations: () => get('/api/registrations'),
+  updateRegistrationStatus: (id, status) => put(`/api/registrations/${id}`, { status }),
+  deleteRegistration: (id) => del(`/api/registrations/${id}`),
+  getEventParticipants: (eventId) => get(`/api/registrations/event/${eventId}`),
 
   // Asset helper
   getAssetUrl: (filename) => filename ? `${API_BASE}/public/images/${filename}` : null,
