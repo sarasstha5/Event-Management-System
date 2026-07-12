@@ -58,7 +58,7 @@ export const login = (req, res) => {
       const isPasswordMatch = bcrypt.compareSync(password, result[0].password);
 
       if (isPasswordMatch) {
-        const { password, role, ...others } = result[0];
+        const { password, ...others } = result[0];
 
         const token = jwt.sign(
           { user_id: result[0].id, role: result[0].role },
