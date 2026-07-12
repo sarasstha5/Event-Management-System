@@ -24,7 +24,7 @@ const upload = multer({
 // Check file type
 function checkFileType(file, cb) {
   // Allowed ext
-  const filetypes = /jpeg|jpg|png|gif/;
+  const filetypes = /jpeg|jpg|png|gif|webp|jfif/;
   // Check ext
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
   // Check mime
@@ -33,7 +33,7 @@ function checkFileType(file, cb) {
   if (mimetype && extname) {
     return cb(null, true);
   } else {
-    cb("Error: Please Upload Images Only!");
+    cb(new Error("Please Upload Images Only (jpeg, jpg, png, gif, webp, jfif)!"));
   }
 }
 

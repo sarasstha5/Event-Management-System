@@ -23,6 +23,13 @@ route.put("/:id/role", isVerify, isAdmin, updateUserRole);
 // Profile operations (Logged-in users)
 route.get("/profile", isVerify, getProfile);
 route.put("/profile", isVerify, updateProfile);
-route.post("/profile-image", isVerify, upload.single("profile_image"), uploadProfileImage);
+route.post("/profile-image", isVerify, (req, res, next) => {
+  upload.single("profile_image")(req, res, (err) => {
+    if (err) {
+      return res.status(400).send({ message: err.message });
+    }
+    next();
+  });
+}, uploadProfileImage);
 
 export default route;
