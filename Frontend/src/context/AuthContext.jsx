@@ -65,7 +65,7 @@ export function AuthProvider({ children }) {
       setUser(res.user);
       setToken(res.token);
       localStorage.setItem('user', JSON.stringify(res.user));
-      Cookies.set('accessToken', res.token);
+      Cookies.set('accessToken', res.token, { expires: 7 });
 
       return res.user;
     } catch (err) {
