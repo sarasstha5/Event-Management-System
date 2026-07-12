@@ -4,15 +4,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        paper: '#FFFFFF',
+        paper: 'var(--color-paper)',
         ink: {
-          DEFAULT: '#0F2A4A',
-          soft: '#6B7C8E',
-          faint: '#8EABC3',
+          DEFAULT: 'var(--color-ink)',
+          soft: 'var(--color-ink-soft)',
+          faint: 'var(--color-ink-faint)',
         },
         cobalt: {
-          50: '#F0F4F8',
-          100: '#D2DFEA',
+          50: 'var(--color-cobalt-50)',
+          100: 'var(--color-cobalt-100)',
           400: '#8EABC3',
           500: '#0F2A4A',
           600: '#1E4A7A',
@@ -25,7 +25,7 @@ export default {
           500: '#FF6A39',
           600: '#E05226',
         },
-        line: '#E3E8EE',
+        line: 'var(--color-line)',
         success: '#16A34A',
         danger: '#E5484D',
       },

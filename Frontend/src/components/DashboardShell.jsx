@@ -2,6 +2,7 @@ import { NavLink, Link } from 'react-router-dom'
 import { Ticket, LogOut } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { api } from '../utils/api'
+import ThemeToggle from './ThemeToggle'
 
 export default function DashboardShell({ title, nav, user, children }) {
   const { logout } = useAuth()
@@ -74,8 +75,9 @@ export default function DashboardShell({ title, nav, user, children }) {
         </div>
       </aside>
       <div className="flex-1 min-w-0 flex flex-col">
-        <header className="h-16 border-b border-line bg-white/70 backdrop-blur flex items-center px-8 shrink-0">
+        <header className="h-16 border-b border-line bg-white/70 backdrop-blur flex items-center justify-between px-8 shrink-0">
           <h1 className="font-display text-xl font-medium text-ink">{title}</h1>
+          <ThemeToggle />
         </header>
         <main className="flex-1 p-8">{children}</main>
       </div>

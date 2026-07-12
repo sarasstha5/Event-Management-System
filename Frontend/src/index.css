@@ -2,17 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
-html { scroll-behavior: smooth; }
-body { @apply font-body text-ink antialiased; }
+/* ==========================================================================
+   Theme Variables Setup
+   ========================================================================== */
+:root {
+  --color-paper: #FFFFFF;
+  --color-ink: #0F2A4A;
+  --color-ink-soft: #6B7C8E;
+  --color-ink-faint: #8EABC3;
+  --color-line: #E3E8EE;
+  --color-bg-white: #FFFFFF;
+  --color-cobalt-50: #F0F4F8;
+  --color-cobalt-100: #D2DFEA;
+}
 
-/* Ticket-stub signature: perforated tear line between the info side
-   and the date-stamp side of an event card. */
+html.dark {
+  --color-paper: #0b0f19;
+  --color-ink: #F3F4F6;
+  --color-ink-soft: #9CA3AF;
+  --color-ink-faint: #6B7280;
+  --color-line: #1e293b;
+  --color-bg-white: #111827;
+  --color-cobalt-50: #1e293b;
+  --color-cobalt-100: #374151;
+}
+
+html { scroll-behavior: smooth; }
+body { 
+  @apply font-body text-ink antialiased; 
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Perforated tear line between info and date-stamp side */
 .tear-line {
   position: relative;
   background-image: repeating-linear-gradient(
     to bottom,
-    #E3E8EE 0,
-    #E3E8EE 6px,
+    var(--color-line) 0,
+    var(--color-line) 6px,
     transparent 6px,
     transparent 14px
   );
@@ -24,7 +53,7 @@ body { @apply font-body text-ink antialiased; }
   position: absolute;
   width: 16px;
   height: 16px;
-  background: #FFFFFF;
+  background: var(--color-bg-white);
   border-radius: 9999px;
   left: -8px;
 }
@@ -57,7 +86,6 @@ a.bg-ink:hover {
 }
 
 /* 2. Active Navigation States: Sparingly use Accent Orange (#FF6A39) */
-/* Dashboard sidebar active nav link */
 a.bg-cobalt-50.text-cobalt-600 {
   background-color: rgba(255, 106, 57, 0.08) !important;
   color: #FF6A39 !important;
@@ -73,7 +101,7 @@ a.text-ink.bg-black\/\[0\.04\] {
   color: #FF6A39 !important;
 }
 
-/* 3. Existing Gradients: Force color stops from #0F2A4A (navy) to #1E4A7A (deep navy) */
+/* 3. Existing Gradients */
 .bg-gradient-to-r.from-cobalt-500.to-amber-500,
 .from-cobalt-500.to-cobalt-700,
 .from-amber-400.to-amber-600,
@@ -98,3 +126,114 @@ a.text-ink.bg-black\/\[0\.04\] {
   background-color: rgba(255, 255, 255, 0.2) !important;
   color: #FFFFFF !important;
 }
+
+/* ==========================================================================
+   Dark Mode Explicit Component Overrides
+   ========================================================================== */
+html.dark body {
+  background-color: var(--color-paper) !important;
+  color: var(--color-ink) !important;
+}
+
+html.dark .bg-paper,
+html.dark .bg-white,
+html.dark aside.bg-white,
+html.dark header.bg-white\/70,
+html.dark div.bg-white {
+  background-color: var(--color-bg-white) !important;
+  transition: background-color 0.2s ease;
+}
+
+html.dark .text-ink {
+  color: var(--color-ink) !important;
+}
+
+html.dark .text-ink-soft {
+  color: var(--color-ink-soft) !important;
+}
+
+html.dark .text-ink-faint {
+  color: var(--color-ink-faint) !important;
+}
+
+html.dark .border-line,
+html.dark .border-b,
+html.dark .border-t,
+html.dark .border-r,
+html.dark .border {
+  border-color: var(--color-line) !important;
+}
+
+html.dark .bg-cobalt-50 {
+  background-color: var(--color-cobalt-50) !important;
+}
+
+html.dark .text-cobalt-600 {
+  color: #FF6A39 !important;
+}
+
+/* Inputs and Forms */
+html.dark input,
+html.dark select,
+html.dark textarea {
+  background-color: var(--color-bg-white) !important;
+  color: var(--color-ink) !important;
+  border-color: var(--color-line) !important;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: var(--color-ink-faint) !important;
+}
+
+/* List items / hover states in sidebar & navs */
+html.dark .hover\:bg-black\/\[0\.03\]:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+html.dark .bg-black\/\[0\.04\] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Custom styles for toast notifications in dark mode */
+html.dark .go2072320402 {
+  background: var(--color-bg-white) !important;
+  color: var(--color-ink) !important;
+  border: 1px solid var(--color-line) !important;
+}
+
+/* Navigation, Sidebar, and Header dark mode styles */
+html.dark header,
+html.dark header.bg-paper\/90,
+html.dark header.bg-white\/70,
+html.dark aside,
+html.dark aside.bg-white,
+html.dark div.bg-white\/70 {
+  background-color: var(--color-bg-white) !important;
+  color: var(--color-ink) !important;
+  border-color: var(--color-line) !important;
+}
+
+html.dark a.text-ink-soft,
+html.dark p.text-ink-soft,
+html.dark span.text-ink-soft {
+  color: var(--color-ink-soft) !important;
+}
+
+html.dark a.text-ink-soft:hover,
+html.dark a.text-ink-soft.hover\:text-ink:hover {
+  color: var(--color-ink) !important;
+}
+
+html.dark a.text-ink.bg-black\/\[0\.04\] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: var(--color-ink) !important;
+}
+
+html.dark aside a.text-ink-soft.hover\:bg-black\/\[0\.03\]:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: var(--color-ink) !important;
+}
+
+

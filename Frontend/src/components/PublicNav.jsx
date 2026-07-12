@@ -2,6 +2,7 @@ import { NavLink, Link } from 'react-router-dom'
 import { Ticket } from 'lucide-react'
 import Button from './Button'
 import { useAuth } from '../context/AuthContext'
+import ThemeToggle from './ThemeToggle'
 
 const links = [
   { to: '/', label: 'Home' },
@@ -39,6 +40,7 @@ export default function PublicNav() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           {user ? (
             <Button 
               as={Link} 
