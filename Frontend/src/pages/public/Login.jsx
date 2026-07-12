@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Ticket } from 'lucide-react'
+import { Ticket, Eye, EyeOff } from 'lucide-react'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
 import { Field } from '../../components/Input'
@@ -10,6 +10,7 @@ import { toast } from 'react-hot-toast'
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
@@ -68,13 +69,23 @@ export default function Login() {
               />
             </Field>
             <Field label="Password">
-              <Input
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <div className="relative">
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-ink-faint hover:text-ink-soft focus:outline-none"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </Field>
             <Button type="submit" className="w-full" size="lg" disabled={submitting}>
               {submitting ? 'Logging in...' : 'Log in'}

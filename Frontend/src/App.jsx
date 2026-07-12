@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import { Toaster } from 'react-hot-toast'
 
@@ -83,6 +83,77 @@ function GuestRoute({ children }) {
   return children
 }
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Home />
+  },
+  {
+    path: "/about",
+    element: <About />
+  },
+  {
+    path: "/events",
+    element: <UpcomingEvents />
+  },
+  {
+    path: "/events/:id",
+    element: <EventDetails />
+  },
+  {
+    path: "/contact",
+    element: <Contact />
+  },
+  {
+    path: "/login",
+    element: <GuestRoute><Login /></GuestRoute>
+  },
+  {
+    path: "/register",
+    element: <GuestRoute><Register /></GuestRoute>
+  },
+  {
+    path: "/dashboard",
+    element: <ProtectedRoute><UserDashboard /></ProtectedRoute>
+  },
+  {
+    path: "/dashboard/browse",
+    element: <ProtectedRoute><BrowseEvents /></ProtectedRoute>
+  },
+  {
+    path: "/dashboard/registrations",
+    element: <ProtectedRoute><MyRegistrations /></ProtectedRoute>
+  },
+  {
+    path: "/dashboard/profile",
+    element: <ProtectedRoute><Profile /></ProtectedRoute>
+  },
+  {
+    path: "/admin",
+    element: <AdminRoute><AdminDashboard /></AdminRoute>
+  },
+  {
+    path: "/admin/events",
+    element: <AdminRoute><EventManagement /></AdminRoute>
+  },
+  {
+    path: "/admin/categories",
+    element: <AdminRoute><CategoryManagement /></AdminRoute>
+  },
+  {
+    path: "/admin/participants",
+    element: <AdminRoute><ParticipantManagement /></AdminRoute>
+  },
+  {
+    path: "/admin/registrations",
+    element: <AdminRoute><RegistrationManagement /></AdminRoute>
+  },
+  {
+    path: "*",
+    element: <Navigate to="/" replace />
+  }
+])
+
 export default function App() {
   return (
     <>
@@ -106,34 +177,7 @@ export default function App() {
           },
         }}
       />
-      <Routes>
-        {/* Public pages */}
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/events" element={<UpcomingEvents />} />
-        <Route path="/events/:id" element={<EventDetails />} />
-        <Route path="/contact" element={<Contact />} />
-
-        {/* Guest only pages */}
-        <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
-        <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
-
-        {/* User / participant pages */}
-        <Route path="/dashboard" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
-        <Route path="/dashboard/browse" element={<ProtectedRoute><BrowseEvents /></ProtectedRoute>} />
-        <Route path="/dashboard/registrations" element={<ProtectedRoute><MyRegistrations /></ProtectedRoute>} />
-        <Route path="/dashboard/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-
-        {/* Admin pages */}
-        <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-        <Route path="/admin/events" element={<AdminRoute><EventManagement /></AdminRoute>} />
-        <Route path="/admin/categories" element={<AdminRoute><CategoryManagement /></AdminRoute>} />
-        <Route path="/admin/participants" element={<AdminRoute><ParticipantManagement /></AdminRoute>} />
-        <Route path="/admin/registrations" element={<AdminRoute><RegistrationManagement /></AdminRoute>} />
-
-        {/* Catch-all redirect */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <RouterProvider router={router} />
     </>
   )
 }
