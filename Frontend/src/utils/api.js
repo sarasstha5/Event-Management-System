@@ -34,9 +34,15 @@ export const post = async (endpoint, body = {}, config = {}) => {
   try {
     const token = getAuthTokenFromCookies();
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    
+    const requestHeaders = { ...headers, ...config.headers };
+    if (body instanceof FormData) {
+      requestHeaders['Content-Type'] = undefined;
+    }
+
     const response = await client.post(endpoint, body, {
       ...config,
-      headers: { ...headers, ...config.headers },
+      headers: requestHeaders,
     });
     return response.data;
   } catch (error) {
@@ -50,9 +56,15 @@ export const put = async (endpoint, body = {}, config = {}) => {
   try {
     const token = getAuthTokenFromCookies();
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+    const requestHeaders = { ...headers, ...config.headers };
+    if (body instanceof FormData) {
+      requestHeaders['Content-Type'] = undefined;
+    }
+
     const response = await client.put(endpoint, body, {
       ...config,
-      headers: { ...headers, ...config.headers },
+      headers: requestHeaders,
     });
     return response.data;
   } catch (error) {

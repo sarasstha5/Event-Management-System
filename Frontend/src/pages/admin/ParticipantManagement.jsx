@@ -119,7 +119,28 @@ export default function ParticipantManagement() {
         <Table columns={['Name', 'Email', 'Phone', 'Registrations', '']}>
           {filtered.map((u) => (
             <tr key={u.id}>
-              <Td className="font-medium">{u.fullname}</Td>
+              <Td className="font-medium">
+                <div className="flex items-center gap-3">
+                  {u.profile_image ? (
+                    <img 
+                      src={api.getAssetUrl(u.profile_image)} 
+                      alt={u.fullname} 
+                      className="w-8 h-8 rounded-full object-cover border border-line shrink-0" 
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-ink text-paper flex items-center justify-center font-display text-[10px] font-medium shrink-0">
+                      {(u.fullname || '')
+                        .split(' ')
+                        .filter(Boolean)
+                        .map((n) => n[0])
+                        .join('')
+                        .slice(0, 2)
+                        .toUpperCase()}
+                    </div>
+                  )}
+                  <span>{u.fullname}</span>
+                </div>
+              </Td>
               <Td className="text-ink-soft">{u.email}</Td>
               <Td className="text-ink-soft font-mono text-xs">{u.phone}</Td>
               <Td className="text-ink-soft">
